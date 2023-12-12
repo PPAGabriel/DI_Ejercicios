@@ -76,50 +76,76 @@ class VentanaPrincipal(QMainWindow):
         self.boton8=QPushButton("Eliminar lista")
         caixaH1_V3.addWidget(self.boton8)
 
-        # Grid2
-        self.grid2=QGridLayout()
+        # grid2 (primer cuadro de la parte inferior)
+        self.grid2 = QGridLayout()
+        lblSon = QLabel("Son:")
+        combSon = QComboBox()
+        self.grid2.addWidget(lblSon, 0, 0, 1, 1)
+        self.grid2.addWidget(combSon, 0, 1, 1, 2)
 
+        lblRitmo = QLabel("Ritmo:")
+        sldRitmo = QSlider(Qt.Orientation.Horizontal)
+        sldRitmo.valueChanged.connect(lambda valor: lblRitmo.setText("Ritmo:    " + str(valor)))
+        self.grid2.addWidget(lblRitmo, 1, 0, 1, 1)
+        self.grid2.addWidget(sldRitmo, 1, 1, 1, 2)
 
+        lblVolumen = QLabel("Volumen:")
+        sldVolumen = QSlider(Qt.Orientation.Horizontal)
+        sldVolumen.valueChanged.connect(lambda valor: lblVolumen.setText("Volumen:    " + str(valor)))
+        self.grid2.addWidget(lblVolumen, 2, 0, 1, 1)
+        self.grid2.addWidget(sldVolumen, 2, 1, 1, 2)
+
+        lblFormato = QLabel("Formato:")
+        combFormato = QComboBox()
+        self.grid2.addWidget(lblFormato, 3, 0, 1, 1)
+        self.grid2.addWidget(combFormato, 3, 1, 1, 2)
+
+        lblSalida = QLabel("Salida de audio:")
+        combSalida = QComboBox()
+        self.grid2.addWidget(lblSalida, 4, 0, 1, 1)
+        self.grid2.addWidget(combSalida, 4, 1, 1, 2)
 
         caixaH2.addLayout(self.grid2)
 
-        #frame
+        # frame (segundo cuadro de la parte inferior)
 
-        caixaH2_H2=QHBoxLayout()
-        frame1=QFrame()
+        caixaH2_H2 = QHBoxLayout()
+        frame1 = QGroupBox("Opciones de reproducción")
+        frame1.setStyleSheet(
+            "QGroupBox { "
+            "            border: 1px solid black;"
+            "            border-radius: 5px;"
+            "}")
         frame1.setLayout(caixaH2_H2)
-        frame1.setObjectName("frame1")
-        frame1.setFrameStyle(QFrame.Shape.Box)
         caixaH2.addWidget(frame1)
 
-        caixaH2_V2_V1=QVBoxLayout()
-        caixaH2_V2_V2=QVBoxLayout()
-        caixaH2_H2.addLayout(caixaH2_V2_V1)
-        caixaH2_H2.addLayout(caixaH2_V2_V2)
+        caixaH2_H2_V1 = QVBoxLayout()
 
-        self.checkAsincrono=QCheckBox("Asincrono")
-        caixaH2_V2_V1.addWidget(self.checkAsincrono)
-        self.checkENome=QCheckBox("El nombre del fichero")
-        caixaH2_V2_V1.addWidget(self.checkENome)
-        self.checkXML=QCheckBox("XML persistente")
-        caixaH2_V2_V1.addWidget(self.checkXML)
+        self.checkAsincrono = QCheckBox("Asincrono")
+        caixaH2_H2_V1.addWidget(self.checkAsincrono)
+        self.checkENome = QCheckBox("El nombre del fichero")
+        caixaH2_H2_V1.addWidget(self.checkENome)
+        self.checkXML = QCheckBox("XML persistente")
+        caixaH2_H2_V1.addWidget(self.checkXML)
+
+        caixaH2_H2.addLayout(caixaH2_H2_V1)
+
+        caixaH2_H2_V2 = QVBoxLayout()
 
         self.checkFiltro = QCheckBox("Filtrar antes de reproducir")
-        caixaH2_V2_V2.addWidget(self.checkFiltro)
+        caixaH2_H2_V2.addWidget(self.checkFiltro)
         self.checkEXML = QCheckBox("Es XML")
-        caixaH2_V2_V2.addWidget(self.checkEXML)
+        caixaH2_H2_V2.addWidget(self.checkEXML)
         self.checkNPL = QCheckBox("Reproducción NPL")
-        caixaH2_V2_V2.addWidget(self.checkNPL)
+        caixaH2_H2_V2.addWidget(self.checkNPL)
 
+        caixaH2_H2.addLayout(caixaH2_H2_V2)
 
-
-
-
-        container=QWidget()
+        container = QWidget()
         container.setLayout(caixaV)
         self.setCentralWidget(container)
 
-        self.setFixedSize(1000,600)
+        self.setFixedSize(1000, 600)
         self.show()
 
 
