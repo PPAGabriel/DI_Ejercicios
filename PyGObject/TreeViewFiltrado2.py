@@ -1,3 +1,5 @@
+from tkinter import *
+from tkinter import messagebox as MessageBox
 import gi
 import sqlite3 as dbapi
 
@@ -33,6 +35,11 @@ class FestraPrincipal(Gtk.Window):
             cursor.close()
             database.close()
 
+        #Creamos un scroll
+        self.scroll=Gtk.ScrolledWindow()
+        self.scroll.set_policy(Gtk.PolicyType.NEVER,Gtk.PolicyType.AUTOMATIC)
+        self.scroll.set_size_request(100,132)
+
         #trvDatosUsuarios=Gtk.TreeView(model=modelo)
         self.trvDatosUsuarios=Gtk.TreeView(model=modelo_filtrado)
         cambiar=self.trvDatosUsuarios.get_selection()
@@ -64,7 +71,8 @@ class FestraPrincipal(Gtk.Window):
         columna=Gtk.TreeViewColumn("Genero",celda,text=3)
         self.trvDatosUsuarios.append_column(columna)
 
-        cajaV1.pack_start(self.trvDatosUsuarios,True,True,0)
+        self.scroll.add(self.trvDatosUsuarios)
+        cajaV1.pack_start(self.scroll,True,True,0)
 
         cajaH=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
         cajaV1.pack_start(cajaH,True,True,0)
@@ -227,6 +235,9 @@ class FestraPrincipal(Gtk.Window):
     def on_engadir_clicked(self, boton, modelo):
         #desaparece el boton de editar
         if self.flag==0:
+
+            self.trvDatosUsuarios.set_sensitive(False)
+
             self.txt1.set_sensitive(True)
             self.txt2.set_sensitive(True)
             self.txt3.set_sensitive(True)
@@ -263,7 +274,9 @@ class FestraPrincipal(Gtk.Window):
             self.flag=2
 
     def on_aceptar_clicked(self, boton, modelo,modelo_filtrado):
+
         if self.flag==2:
+
             self.txt1.set_sensitive(False)
             self.txt2.set_sensitive(False)
             self.txt3.set_sensitive(False)
@@ -272,11 +285,7 @@ class FestraPrincipal(Gtk.Window):
             self.rbtOutros2.set_sensitive(False)
             self.chkFallecido.set_sensitive(False)
 
-            self.btnEditar.show()
-            self.btnEngadir.show()
-            self.btnAceptar.hide()
-            self.btnCancelar.hide()
-            self.flag=0
+
 
             #aqui se hace el update
             try:
@@ -316,6 +325,7 @@ class FestraPrincipal(Gtk.Window):
                 print(e)
 
         elif self.flag==1:
+
             self.txt1.set_sensitive(False)
             self.txt2.set_sensitive(False)
             self.txt3.set_sensitive(False)
@@ -324,11 +334,7 @@ class FestraPrincipal(Gtk.Window):
             self.rbtOutros2.set_sensitive(False)
             self.chkFallecido.set_sensitive(False)
 
-            self.btnEditar.show()
-            self.btnEngadir.show()
-            self.btnAceptar.hide()
-            self.btnCancelar.hide()
-            self.flag = 0
+
 
             #aqui se hace agrega el nuevo usuario
             try:
@@ -337,36 +343,80 @@ class FestraPrincipal(Gtk.Window):
                 else:
                     self.fallecido = False
 
-                database = dbapi.connect("baseDatos2.dat")
-                cursor = database.cursor()
-                cursor.execute("insert into usuarios values (?,?,?,?,?)", (self.txt2.get_text(), self.txt1.get_text(), self.txt3.get_text(), self.xeneroActivo, self.fallecido))
-                database.commit()
+                #comprobar que el dni tiene el formato correcto
+                if len(self.txt2.get_text())==9:
+                    if self.txt2.get_text()[0:8].isdigit() and self.txt2.get_text()[8].isalpha() and self.txt2.get_text()[8]:
 
-                cursor.close()
-                database.close()
+                        self.btnEditar.show()
+                        self.btnEngadir.show()
+                        self.btnAceptar.hide()
+                        self.btnCancelar.hide()
+                        self.flag = 0
 
-                # Obtener el modelo sin filtrar
-                modelo.clear()
-                try:
-                    database = dbapi.connect("baseDatos2.dat")
-                    cursor = database.cursor()
-                    cursor.execute("select * from usuarios")
+                        #Hacer mayuscula la letra del dni:
+                        dniMayuscula=self.txt2.get_text()[0:8]+self.txt2.get_text()[8].upper()
 
-                    for usuario in cursor:
-                        modelo.append(usuario)
+                        database = dbapi.connect("baseDatos2.dat")
+                        cursor = database.cursor()
+                        cursor.execute("insert into usuarios values (?,?,?,?,?)", (
+                        dniMayuscula, self.txt1.get_text(), self.txt3.get_text(), self.xeneroActivo,
+                        self.fallecido))
+                        database.commit()
 
-                except dbapi.StandardError as e:
-                    print("Error al cargar la base de datos")
-                finally:
-                    cursor.close()
-                    database.close()
+                        cursor.close()
+                        database.close()
 
-                # Refiltrar el modelo filtrado
-                modelo_filtrado.refilter()
+                        # Obtener el modelo sin filtrar
+                        modelo.clear()
+                        try:
+                            database = dbapi.connect("baseDatos2.dat")
+                            cursor = database.cursor()
+                            cursor.execute("select * from usuarios")
+
+                            for usuario in cursor:
+                                modelo.append(usuario)
+
+                        except dbapi.StandardError as e:
+                            print("Error al cargar la base de datos")
+                        finally:
+                            cursor.close()
+                            database.close()
+
+                        # Refiltrar el modelo filtrado
+                        modelo_filtrado.refilter()
+
+                        self.trvDatosUsuarios.set_sensitive(True)
+
+                    else:
+                        MessageBox.showinfo("Error","El DNI no tiene el formato correcto")
+                        self.txt1.set_sensitive(True)
+                        self.txt2.set_sensitive(True)
+                        self.txt3.set_sensitive(True)
+                        self.rbtHome2.set_sensitive(True)
+                        self.rbtMuller2.set_sensitive(True)
+                        self.rbtOutros2.set_sensitive(True)
+                        self.chkFallecido.set_sensitive(True)
+
+                else:
+                    MessageBox.showinfo("Error", "El DNI requiere de 8 numeros y una letra")
+                    self.txt1.set_sensitive(True)
+                    self.txt2.set_sensitive(True)
+                    self.txt3.set_sensitive(True)
+                    self.rbtHome2.set_sensitive(True)
+                    self.rbtMuller2.set_sensitive(True)
+                    self.rbtOutros2.set_sensitive(True)
+                    self.chkFallecido.set_sensitive(True)
             except dbapi.DatabaseError as e:
                 print(e)
 
+
+
+
     def on_cancelar_clicked(self, boton, modelo,modelo_filtrado):
+
+        self.scroll.set_sensitive(True)
+
+
         self.txt1.set_sensitive(False)
         self.txt2.set_sensitive(False)
         self.txt3.set_sensitive(False)
