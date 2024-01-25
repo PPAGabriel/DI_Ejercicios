@@ -19,10 +19,10 @@ except dbapi.DataBaseError as e:
 
 
 try:
-    c.execute("""insert into usuarios values('3333-a',"Ana Perez",19,"Mujer",True)""")
-    c.execute("""insert into usuarios values('2222-b',"Roque Diaz",56,"Hombre",False)""")
-    c.execute("""insert into usuarios values('1111-c',"Fiz Vidal",37,"Hombre",False)""")
-    c.execute("""insert into usuarios values('4444-z',"Rosa Pino",20,"Mujer",False)""")
+    c.execute("""insert into usuarios values('3333-a',"Ana Perez",19,"Muller",True)""")
+    c.execute("""insert into usuarios values('2222-b',"Roque Diaz",56,"Home",False)""")
+    c.execute("""insert into usuarios values('1111-c',"Fiz Vidal",37,"Home",False)""")
+    c.execute("""insert into usuarios values('4444-z',"Rosa Pino",20,"Outros",False)""")
     bbdd.commit()
 except dbapi.DatabaseError as e:
     print("Error al insertar usuarios "+e)

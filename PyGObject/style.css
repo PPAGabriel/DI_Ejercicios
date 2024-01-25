@@ -1,0 +1,9 @@
+/*cambiar el color de fondo del self.txt3 a rojo*/
+
+#error {
+    background-color: #fc7878;
+}
+
+#correct{
+    background-color: rgba(0, 0, 0, 0.32);
+}

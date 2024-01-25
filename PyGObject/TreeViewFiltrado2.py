@@ -4,14 +4,14 @@ import gi
 import sqlite3 as dbapi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, Gdk,GLib
 
 class FestraPrincipal(Gtk.Window):
     def __init__(self):
         super().__init__()
         self.set_title("Ejemplo TreeView filtrado")
 
-        self.set_default_size(250, 100)
+        self.set_default_size(400, 100)
         self.set_border_width(10)
         cajaPrincipal=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         cajaV1=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
@@ -102,12 +102,14 @@ class FestraPrincipal(Gtk.Window):
         lblNome = Gtk.Label(label="Nome")
         cajaV2_H1.pack_start(lblNome, True, True, 0)
         self.txt1 = Gtk.Entry()
+        self.txt1.set_tooltip_text("Nombre de la persona a crear ou modificar")
         #imposibilitamos que se pueda editar el nombre
         self.txt1.set_sensitive(False)
         cajaV2_H1.pack_start(self.txt1, True, True, 0)
         lblDNI = Gtk.Label(label="DNI")
         cajaV2_H1.pack_start(lblDNI, True, True, 0)
         self.txt2 = Gtk.Entry()
+        self.txt2.set_tooltip_text("DNI de la persona a crear o modificar")
         #imposibilitamos que se pueda editar el DNI
         self.txt2.set_sensitive(False)
         cajaV2_H1.pack_start(self.txt2, True, True, 0)
@@ -119,6 +121,7 @@ class FestraPrincipal(Gtk.Window):
         lblEdade = Gtk.Label(label="Edade")
         cajaV2_H2.pack_start(lblEdade, True, True, 0)
         self.txt3 = Gtk.Entry()
+        self.txt3.set_tooltip_text("Edad de la persona a crear o modificar")
         #imposibilitamos que se pueda editar la edad
         self.txt3.set_sensitive(False)
         self.txt3.set_width_chars(2)
@@ -150,31 +153,47 @@ class FestraPrincipal(Gtk.Window):
         self.chkFallecido.set_sensitive(False)
         cajaV2_H2.pack_start(self.chkFallecido, True, True, 0)
 
+        #Barra de Progreso
+        self.barraProgreso = Gtk.ProgressBar()
+        cajaV2_H2.pack_start(self.barraProgreso, True, True, 0)
+        self.contadorActividad = 100
+        self.temporizador=GLib.timeout_add(100,self.on_contador,None)
+
         cajaV2_H3 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
 
         #Botones
         self.flag=0
 
-        self.btnEngadir = Gtk.Button(label="Novo")
-        self.btnEngadir.connect("clicked", self.on_engadir_clicked, modelo)
+        self.btnNovo = Gtk.Button.new_with_mnemonic("_Novo") #el atajo es la primera letra de la palabra (se aplica con alt+letra)
+        self.btnNovo.connect("clicked", self.on_novo_clicked, modelo)
 
-        self.btnEditar = Gtk.Button(label="Editar")
+        self.btnEditar = Gtk.Button.new_with_mnemonic("_Editar") #el atajo es la primera letra de la palabra (se aplica con alt+letra)
         self.btnEditar.connect("clicked", self.on_editar_clicked, modelo)
 
-        self.btnAceptar = Gtk.Button(label="Aceptar")
+        self.btnAceptar = Gtk.Button.new_with_mnemonic("_Aceptar") #el atajo es la primera letra de la palabra (se aplica con alt+letra)
         self.btnAceptar.connect("clicked", self.on_aceptar_clicked, modelo,modelo_filtrado)
 
-        self.btnCancelar = Gtk.Button(label="Cancelar")
+        self.btnCancelar = Gtk.Button.new_with_mnemonic("_Cancelar") #el atajo es la primera letra de la palabra (se aplica con alt+letra)
         self.btnCancelar.connect("clicked", self.on_cancelar_clicked, modelo,modelo_filtrado)
 
-        cajaV2_H3.pack_start(self.btnEngadir, True, True, 0)
+        cajaV2_H3.pack_start(self.btnNovo, True, True, 0)
         cajaV2_H3.pack_start(self.btnEditar, True, True, 0)
         cajaV2_H3.pack_start(self.btnAceptar,True,True,0)
         cajaV2_H3.pack_start(self.btnCancelar, True, True, 0)
 
+        cajaV2_H4 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+
+        #Text View
+        self.txtViewConsola = Gtk.TextView()
+        self.bufferTexto=Gtk.TextBuffer()
+        self.txtViewConsola.set_buffer(self.bufferTexto)
+        self.txtViewConsola.set_sensitive(False)
+        cajaV2_H4.pack_start(self.txtViewConsola, True, True, 0)
+
         cajaV2.pack_start(cajaV2_H1, True, True, 0)
         cajaV2.pack_start(cajaV2_H2, True, True, 0)
         cajaV2.pack_start(cajaV2_H3,True,True,0)
+        cajaV2.pack_start(cajaV2_H4, True, True, 0)
 
         cajaPrincipal.pack_start(cajaV2, True, True, 0)
 
@@ -185,6 +204,16 @@ class FestraPrincipal(Gtk.Window):
         self.show_all()
         self.btnAceptar.hide()
         self.btnCancelar.hide()
+        self.barraProgreso.hide()
+
+
+    def on_contador(self,datosExtendidosUsuario):
+        if self.contadorActividad<100:
+            self.contadorActividad+=10
+            self.barraProgreso.set_fraction(self.contadorActividad/100)
+        else:
+            self.barraProgreso.hide()
+        return True
 
     def on_obxectoSeleccion_changed(self, seleccion):
         (modelo, fila) = seleccion.get_selected()
@@ -232,7 +261,7 @@ class FestraPrincipal(Gtk.Window):
             self.rbtMuller2.set_active(False)
             self.rbtOutros2.set_active(False)
 
-    def on_engadir_clicked(self, boton, modelo):
+    def on_novo_clicked(self, boton, modelo):
         #desaparece el boton de editar
         if self.flag==0:
 
@@ -252,7 +281,7 @@ class FestraPrincipal(Gtk.Window):
             self.txt3.set_text("")
 
             self.btnEditar.hide()
-            self.btnEngadir.hide()
+            self.btnNovo.hide()
             self.btnAceptar.show()
             self.btnCancelar.show()
             self.flag=1
@@ -268,7 +297,7 @@ class FestraPrincipal(Gtk.Window):
             self.chkFallecido.set_sensitive(True)
 
             self.btnEditar.hide()
-            self.btnEngadir.hide()
+            self.btnNovo.hide()
             self.btnAceptar.show()
             self.btnCancelar.show()
             self.flag=2
@@ -320,6 +349,8 @@ class FestraPrincipal(Gtk.Window):
 
                 # Refiltrar el modelo filtrado
                 modelo_filtrado.refilter()
+                self.barraProgreso.show()
+                self.contadorActividad = 0
 
             except dbapi.DatabaseError as e:
                 print(e)
@@ -344,11 +375,22 @@ class FestraPrincipal(Gtk.Window):
                     self.fallecido = False
 
                 #comprobar que el dni tiene el formato correcto
+
+                css_provider = Gtk.CssProvider()
+                css_provider.load_from_path('style.css')
+                context = Gtk.StyleContext()
+                screen = Gdk.Screen.get_default()
+
                 if len(self.txt2.get_text())==9:
                     if self.txt2.get_text()[0:8].isdigit() and self.txt2.get_text()[8].isalpha() and self.txt2.get_text()[8]:
 
+                        self.txt2.set_name("correct")
+
+                        context.add_provider_for_screen(screen, css_provider,
+                                                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
                         self.btnEditar.show()
-                        self.btnEngadir.show()
+                        self.btnNovo.show()
                         self.btnAceptar.hide()
                         self.btnCancelar.hide()
                         self.flag = 0
@@ -384,11 +426,20 @@ class FestraPrincipal(Gtk.Window):
 
                         # Refiltrar el modelo filtrado
                         modelo_filtrado.refilter()
+                        self.barraProgreso.show()
+                        self.contadorActividad = 0
 
                         self.trvDatosUsuarios.set_sensitive(True)
 
                     else:
-                        MessageBox.showinfo("Error","El DNI no tiene el formato correcto")
+                        self.txt2.set_name("error")
+
+                        context.add_provider_for_screen(screen, css_provider,
+                                                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
+                        txtError="El DNI debe tener 8 numeros y una letra"
+                        self.bufferTexto.insert_at_cursor(txtError+"\n",len(txtError+"\n"))
                         self.txt1.set_sensitive(True)
                         self.txt2.set_sensitive(True)
                         self.txt3.set_sensitive(True)
@@ -398,7 +449,14 @@ class FestraPrincipal(Gtk.Window):
                         self.chkFallecido.set_sensitive(True)
 
                 else:
-                    MessageBox.showinfo("Error", "El DNI requiere de 8 numeros y una letra")
+                    txtError="El DNI requiere de 9 caracteres"
+                    self.bufferTexto.insert_at_cursor(txtError+"\n",len(txtError+"\n"))
+
+                    self.txt2.set_name("error")
+
+                    context.add_provider_for_screen(screen, css_provider,
+                                                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
                     self.txt1.set_sensitive(True)
                     self.txt2.set_sensitive(True)
                     self.txt3.set_sensitive(True)
@@ -414,8 +472,7 @@ class FestraPrincipal(Gtk.Window):
 
     def on_cancelar_clicked(self, boton, modelo,modelo_filtrado):
 
-        self.scroll.set_sensitive(True)
-
+        self.trvDatosUsuarios.set_sensitive(True)
 
         self.txt1.set_sensitive(False)
         self.txt2.set_sensitive(False)
@@ -426,7 +483,7 @@ class FestraPrincipal(Gtk.Window):
         self.chkFallecido.set_sensitive(False)
 
         self.btnEditar.show()
-        self.btnEngadir.show()
+        self.btnNovo.show()
         self.btnAceptar.hide()
         self.btnCancelar.hide()
         self.flag = 0
