@@ -1,6 +1,6 @@
 import sys
 
-from PyQt6.QtGui import QColor
+from PyQt6 import QtGui
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QComboBox,
                              QWidget, QCheckBox, QHBoxLayout, QLineEdit, QTableView)
 from PyQt6.QtCore import Qt, QAbstractTableModel
@@ -23,7 +23,20 @@ class ModeloTabla(QAbstractTableModel):
         #Hacer que la fila tenga un color de letra "Rojo" si el usuario está fallecido
         if rol == Qt.ItemDataRole.ForegroundRole:
             if self.tabla[indice.row()][3]==True:
-                return QColor(Qt.GlobalColor.red)
+                return QtGui.QColor(Qt.GlobalColor.red)
+        if rol==Qt.ItemDataRole.BackgroundRole:
+            if self.tabla[indice.row()][2]=="Home":
+                return QtGui.QColor("green")
+            elif self.tabla[indice.row()][2]=="Muller":
+                return QtGui.QColor("magenta")
+            elif self.tabla[indice.row()][2]=="Outros":
+                return QtGui.QColor("yellow")
+        if rol==Qt.ItemDataRole.DecorationRole:
+            if isinstance(self.tabla[indice.row()][indice.column()],bool):
+                if self.tabla[indice.row()][indice.column()]==True:
+                    return QtGui.QIcon("check.png")
+                else:
+                    return QtGui.QIcon("uncheck.png")
 
     def setData(self, indice, valor, rol): # Establece el dato en el índice de la tabla
         if rol == Qt.ItemDataRole.EditRole: # Si el rol es de edición de datos de la tabla
