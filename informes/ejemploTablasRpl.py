@@ -2,13 +2,16 @@ from reportlab.platypus import (Paragraph, Image, SimpleDocTemplate, Spacer,Tabl
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
+from reportlab.pdfgen.canvas import Color
 
 hojaEstilo=getSampleStyleSheet()
 
 elementosDoc=[]
 
-imagen=Image("oli.jpeg")
-parrafo=Paragraph("Optare")
+imagen=Image("oli.jpeg",20,20)
+estiloCuerpoTexto=hojaEstilo["BodyText"]
+estiloCuerpoTexto.textColor=Color(150,0,0,1)
+parrafo=Paragraph("Optare",estiloCuerpoTexto)
 
 datos=[ ["Empresas","Candidato 1","Candidato 2","Especificaciones"],
         ["Ayco","Marcos","Ruben","Desarrollo web con PHP"],
