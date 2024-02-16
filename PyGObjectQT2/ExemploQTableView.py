@@ -102,8 +102,7 @@ class VentanaPrincipal(QMainWindow):
         self.setCentralWidget(componentePrincipal) # Configuración de la vista de la tabla como widget central
 
         #Seleccionar la primera fila al iniciar la aplicación
-        self.tvwTabla.selectRow(0)
-        self.on_filaSeleccionada()
+        self.tvwTabla.selectRow(-1)
 
         # Configuración del tamaño fijo de la ventana y visualización
         self.setFixedSize(400, 400)

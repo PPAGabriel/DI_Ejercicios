@@ -236,7 +236,7 @@ class VentanaPrincipal(QMainWindow):
 
 
 
-# ejecutamos la union?
+# ejecutamos la aplicación
 if __name__=="__main__":
     aplicacion=QApplication(sys.argv)
     ventana=VentanaPrincipal()
