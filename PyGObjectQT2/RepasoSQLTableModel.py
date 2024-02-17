@@ -1,7 +1,8 @@
 import sys
 
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout,
-                             QWidget, QHBoxLayout, QTableView)
+                             QWidget, QHBoxLayout, QTableView, QComboBox, QLabel, QLineEdit, QGridLayout, QCheckBox,
+                             QMessageBox)
 from PyQt6.QtCore import QSize
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
 
@@ -31,6 +32,58 @@ class VentanaPrincipal(QMainWindow):
 
         self.tabla.setModel(self.modelo) # Configuración del modelo de la tabla
 
+        # EN CASO DE SELECCIONAR FILA PARA RELLENAR LOS CAMPOS (SOLO PUEDE SELECCIONAR UNA FILA DESDE EL INDICE)
+        #self.tabla.selectionModel().selectionChanged.connect(self.on_filaSeleccionada) # Conexión de la señal de selección de fila con el método 'on_filaSeleccionada'
+
+        # GRID 1 (ENTRADAS DEL USUARIO)
+
+        self.grid1 = QGridLayout()
+
+        # DNI
+        lblDNI = QLabel("DNI")
+        self.grid1.addWidget(lblDNI, 0, 0)
+        self.txtDNI = QLineEdit()
+        self.grid1.addWidget(self.txtDNI, 0, 1)
+
+        # Nombre
+        lblNombre = QLabel("Nombre")
+        self.grid1.addWidget(lblNombre, 0, 2)
+        self.txtNombre = QLineEdit()
+        self.grid1.addWidget(self.txtNombre, 0, 3)
+
+        # Edad
+        lblEdad = QLabel("Edad")
+        self.grid1.addWidget(lblEdad, 1, 0)
+        self.txtEdad = QLineEdit()
+        self.grid1.addWidget(self.txtEdad, 1, 1)
+
+        # Genero
+        lblGenero = QLabel("Genero")
+        self.grid1.addWidget(lblGenero, 1, 2)
+        self.cmbGenero = QComboBox()
+        self.cmbGenero.addItem("Hombre")
+        self.cmbGenero.addItem("Mujer")
+        self.cmbGenero.addItem("Otros")
+        self.grid1.addWidget(self.cmbGenero, 1, 3)
+
+        # Fallecido
+        lblFallecido = QLabel("Fallecido")
+        self.grid1.addWidget(lblFallecido, 2, 0)
+        self.chckFallecido = QCheckBox()
+        self.grid1.addWidget(self.chckFallecido, 2, 1)
+
+        cajaV.addLayout(self.grid1)
+
+        # Boton de Añadir
+        self.btnAnadir = QPushButton("Añadir")
+        self.btnAnadir.clicked.connect(self.on_btnAnadir_clicked)
+        cajaV.addWidget(self.btnAnadir)
+
+        # Boton de Eliminar
+        self.btnEliminar = QPushButton("Eliminar")
+        self.btnEliminar.clicked.connect(self.on_btnEliminar_clicked)
+        cajaV.addWidget(self.btnEliminar)
+
         # Creación de la caja horizontal
         cajaH = QHBoxLayout()
 
@@ -53,11 +106,24 @@ class VentanaPrincipal(QMainWindow):
         self.setCentralWidget(container)
 
         # Configuración del tamaño minimo de la ventana y visualización
-        self.setMinimumSize(QSize(500, 300))
+        self.setMinimumSize(QSize(530, 300))
         self.show()
 
 
-    #Métodos para los botones
+    #Método que se ejecuta al seleccionar una fila (LIMITADO A SELECCIONAR SÓLO UNA FILA DESDE EL ÍNDICE)
+
+    '''
+     def on_filaSeleccionada(self):
+        indices = self.tabla.selectedIndexes() # Se obtienen los índices de la fila seleccionada
+        if indices!=[]:
+            self.txtDNI.setText(indices[0].data())
+            self.txtNombre.setText(indices[1].data())
+            self.txtEdad.setText(str(indices[2].data())) #Se convierte a string para que se muestre en el campo de texto
+            self.cmbGenero.setCurrentText(indices[3].data())
+            self.chckFallecido.setChecked(bool(indices[4].data())) #Se convierte a booleano para que se muestre en el campo de texto
+    
+    '''
+   #Metodos de botones
     def on_btnAceptar_clicked(self):
         self.modelo.submitAll() # Realiza los cambios en la base de datos
         print("Cambios realizados en la BD") # Mensaje de depuración
@@ -65,6 +131,38 @@ class VentanaPrincipal(QMainWindow):
     def on_btnCancelar_clicked(self):
         self.modelo.revertAll() # Cancela los cambios realizados en la base de datos
         print("Cambios cancelados") # Mensaje de depuración
+
+    def on_btnAnadir_clicked(self):
+        if self.chckFallecido.isChecked():
+            fallecido = 1
+        else:
+            fallecido = 0
+
+        if self.txtDNI.text()=="" or self.txtNombre.text()=="" or self.txtEdad.text()=="":
+            self.warning = QMessageBox.warning(self, "Error", "Faltan datos por rellenar",
+                                               QMessageBox.StandardButton.Ok)
+        else:
+            row = self.modelo.rowCount()
+            self.modelo.insertRow(row)
+
+            self.modelo.setData(self.modelo.index(row, 0), self.txtDNI.text())
+            self.modelo.setData(self.modelo.index(row, 1), self.txtNombre.text())
+            self.modelo.setData(self.modelo.index(row, 2), self.txtEdad.text())
+            self.modelo.setData(self.modelo.index(row, 3), self.cmbGenero.currentText())
+            self.modelo.setData(self.modelo.index(row, 4),fallecido)
+
+            print("Fila añadida (recuerde darle al boton 'ACEPTAR' para guardar los cambios)")
+
+            self.txtNombre.setText("")
+            self.txtDNI.setText("")
+            self.txtEdad.setText("")
+
+    def on_btnEliminar_clicked(self):
+        indice= self.tabla.currentIndex()
+        print(f"Fila a eliminar: {indice.row()}")
+        if indice.isValid():
+            self.modelo.removeRow(indice.row())
+            print("Fila eliminada (recuerde darle al boton 'ACEPTAR' para guardar los cambios)")
 
 
 if __name__ == "__main__":
