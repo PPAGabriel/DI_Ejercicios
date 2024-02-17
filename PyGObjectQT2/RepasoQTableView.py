@@ -155,10 +155,13 @@ class VentanaPrincipal(QMainWindow):
     #Metodo que elimina la fila seleccionada
     def eliminarFila(self):
         indice= self.tabla.currentIndex() # Se obtienen los índices de la fila seleccionada
-        print(indice.row())
+        print(f"Fila a eliminar: {indice.row()}")
         if indice.isValid():
             self.tabla.model().removeRow(indice.row()) # Se elimina la fila seleccionada
-            print("Fila eliminada")
+            print("Eliminada con exito!")
+
+            self.txtNombre.setText("Nombre")
+            self.txtDni.setText("DNI")
 
     #Metodo para añadir una fila a la tabla
     def on_btnAnadir_pressed(self):
@@ -178,6 +181,9 @@ class VentanaPrincipal(QMainWindow):
             self.tabla.model().tabla.append(fila)
             self.tabla.model().layoutChanged.emit()
             print("Fila añadida")
+
+            self.txtNombre.setText("Nombre")
+            self.txtDni.setText("DNI")
 
 if __name__ == "__main__":
     aplicacion = QApplication(sys.argv)
