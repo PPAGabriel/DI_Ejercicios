@@ -105,7 +105,7 @@ class VentanaPrincipal(QMainWindow):
         self.lista=QListView()
         self.lista.setModel(self.modelo)
         self.lista.setSelectionMode(QListView.SelectionMode.SingleSelection)
-        self.lista.setFixedSize(395,200)
+        self.lista.setFixedSize(400,200)
         caixaH3_V1.addWidget(self.lista)
 
         #botones
