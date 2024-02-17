@@ -2,7 +2,7 @@ import sys
 
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QComboBox,
-                             QWidget, QCheckBox, QHBoxLayout, QLineEdit, QTableView, QPushButton)
+                             QWidget, QCheckBox, QHBoxLayout, QLineEdit, QTableView, QPushButton, QMessageBox)
 from PyQt6.QtCore import Qt, QAbstractTableModel, QModelIndex
 
 
@@ -119,7 +119,12 @@ class VentanaPrincipal(QMainWindow):
         cajaH.addWidget(self.cmbGenero)
         self.chkFallecido=QCheckBox('Fallecido') # Creación del check box para saber su estado vital
         cajaH.addWidget(self.chkFallecido)
-        self.btnEliminar= QPushButton("Eliminar")
+
+        self.btnAnadir= QPushButton("Añadir") # Creación del botón para añadir una fila
+        self.btnAnadir.clicked.connect(self.on_btnAnadir_pressed)
+        cajaH.addWidget(self.btnAnadir)
+
+        self.btnEliminar= QPushButton("Eliminar") # Creación del botón para eliminar la fila seleccionada
         self.btnEliminar.clicked.connect(self.eliminarFila)
         cajaH.addWidget(self.btnEliminar)
 
@@ -134,7 +139,7 @@ class VentanaPrincipal(QMainWindow):
         self.tabla.selectRow(-1)
 
         # Configuración del tamaño fijo de la ventana y visualización
-        self.setFixedSize(400, 400)
+        self.setFixedSize(420, 400)
         self.show()
 
 
@@ -155,6 +160,24 @@ class VentanaPrincipal(QMainWindow):
             self.tabla.model().removeRow(indice.row()) # Se elimina la fila seleccionada
             print("Fila eliminada")
 
+    #Metodo para añadir una fila a la tabla
+    def on_btnAnadir_pressed(self):
+        fila=[]
+
+        #Agregamos elementos en una sola lista
+        fila.append(self.txtNombre.text())
+        fila.append(self.txtDni.text())
+        fila.append(self.cmbGenero.currentText())
+        fila.append(self.chkFallecido.isChecked())
+
+        print(fila)
+
+        if self.txtNombre.text()=="" or self.txtNombre.text()=="Nombre" or self.txtDni.text()=="" or self.txtDni.text()=="DNI":
+            self.warning = QMessageBox.warning(self, "Error", "Faltan datos por rellenar", QMessageBox.StandardButton.Ok)
+        else:
+            self.tabla.model().tabla.append(fila)
+            self.tabla.model().layoutChanged.emit()
+            print("Fila añadida")
 
 if __name__ == "__main__":
     aplicacion = QApplication(sys.argv)
