@@ -22,20 +22,7 @@ class VentanaPrincipal(QMainWindow):
         # Creación de la caja vertical
         cajaV= QVBoxLayout()
 
-        # Creación de la tabla
-        self.tabla = QTableView()
-
-        self.modelo = QSqlTableModel(db=bd) # Creación del modelo de la tabla
-        self.modelo.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit) # Establece la estrategia de edición del modelo (manual)
-        self.modelo.setTable("usuarios")  # Establece la tabla de la base de datos a la que se conectará el modelo
-        self.modelo.select()  # Realiza la consulta a la base de datos
-
-        self.tabla.setModel(self.modelo) # Configuración del modelo de la tabla
-
-        # EN CASO DE SELECCIONAR FILA PARA RELLENAR LOS CAMPOS (SOLO PUEDE SELECCIONAR UNA FILA DESDE EL INDICE)
-        #self.tabla.selectionModel().selectionChanged.connect(self.on_filaSeleccionada) # Conexión de la señal de selección de fila con el método 'on_filaSeleccionada'
-
-        # GRID 1 (ENTRADAS DEL USUARIO)
+        # Grid 1 (DNI, Nombre, Edad, Genero, Fallecido)
 
         self.grid1 = QGridLayout()
 
@@ -84,6 +71,30 @@ class VentanaPrincipal(QMainWindow):
         self.btnEliminar.clicked.connect(self.on_btnEliminar_clicked)
         cajaV.addWidget(self.btnEliminar)
 
+        # Creación de la tabla
+        self.tabla = QTableView()
+
+        self.modelo = QSqlTableModel(db=bd) # Creación del modelo de la tabla
+        self.modelo.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit) # Establece la estrategia de edición del modelo (manual)
+        self.modelo.setTable("usuarios")  # Establece la tabla de la base de datos a la que se conectará el modelo
+
+        self.modelo.select()  # Realiza la consulta a la base de datos
+
+        self.tabla.setModel(self.modelo) # Configuración del modelo de la tabla
+        
+         # Conexión de la señal de selección de fila con el método 'on_filaSeleccionada'
+        self.seleccion = self.tabla.selectionModel()  # Selección de la fila
+        self.seleccion.selectionChanged.connect(self.on_filaSeleccionada)
+
+        # Para que solo se pueda seleccionar una fila (de mantener el raton pulsado)
+        self.tabla.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+
+        # Para que seleccione todas las columnas de la fila seleccionada
+        self.tabla.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+
+        cajaV.addWidget(self.tabla)  # Añadir la tabla a la caja vertical
+
+
         # Creación de la caja horizontal
         cajaH = QHBoxLayout()
 
@@ -97,7 +108,6 @@ class VentanaPrincipal(QMainWindow):
         btnAceptar.clicked.connect(self.on_btnAceptar_clicked)
         btnCancelar.clicked.connect(self.on_btnCancelar_clicked)
 
-        cajaV.addWidget(self.tabla) # Añadir la tabla a la caja vertical
         cajaV.addLayout(cajaH) # Añadir la caja horizontal a la caja vertical
 
         # Contenedor principal
@@ -110,10 +120,8 @@ class VentanaPrincipal(QMainWindow):
         self.show()
 
 
-    #Método que se ejecuta al seleccionar una fila (LIMITADO A SELECCIONAR SÓLO UNA FILA DESDE EL ÍNDICE)
-
-    '''
-     def on_filaSeleccionada(self):
+    #Método que se ejecuta al seleccionar una fila
+    def on_filaSeleccionada(self):
         indices = self.tabla.selectedIndexes() # Se obtienen los índices de la fila seleccionada
         if indices!=[]:
             self.txtDNI.setText(indices[0].data())
@@ -122,7 +130,7 @@ class VentanaPrincipal(QMainWindow):
             self.cmbGenero.setCurrentText(indices[3].data())
             self.chckFallecido.setChecked(bool(indices[4].data())) #Se convierte a booleano para que se muestre en el campo de texto
     
-    '''
+
    #Metodos de botones
     def on_btnAceptar_clicked(self):
         self.modelo.submitAll() # Realiza los cambios en la base de datos

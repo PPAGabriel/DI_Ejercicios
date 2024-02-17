@@ -125,7 +125,7 @@ class VentanaPrincipal(QMainWindow):
         cajaH.addWidget(self.btnAnadir)
 
         self.btnEliminar= QPushButton("Eliminar") # Creación del botón para eliminar la fila seleccionada
-        self.btnEliminar.clicked.connect(self.eliminarFila)
+        self.btnEliminar.clicked.connect(self.on_btnEliminar_clicked)
         cajaH.addWidget(self.btnEliminar)
 
         cajaV.addLayout(cajaH) # Añadir la caja horizontal a la caja principal
@@ -153,7 +153,7 @@ class VentanaPrincipal(QMainWindow):
             self.chkFallecido.setChecked(indices[3].data()) # Se establece el estado vital en el check box del estado vital
 
     #Metodo que elimina la fila seleccionada
-    def eliminarFila(self):
+    def on_btnEliminar_clicked(self):
         indice= self.tabla.currentIndex() # Se obtienen los índices de la fila seleccionada
         print(f"Fila a eliminar: {indice.row()}")
         if indice.isValid():
