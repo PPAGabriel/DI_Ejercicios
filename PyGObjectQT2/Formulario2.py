@@ -17,7 +17,7 @@ class PersonasModelo(QAbstractListModel):
                 _, apelido, _, _ = self.personas[index.row()]
                 _, _, telefono, _ = self.personas[index.row()]
                 _, _, _, formato = self.personas[index.row()]
-                return nome + " | " + apelido + " | " + telefono + " | " + formato
+                return nome + " , " + apelido + " , " + telefono + " , " + formato
 
         def rowCount(self,indice):
             return len(self.personas)
@@ -102,6 +102,7 @@ class VentanaPrincipal(QMainWindow):
 
         self.boton3=QPushButton("Borrar")
         caixaH2_V1_H2.addWidget(self.boton3)
+        self.boton3.pressed.connect(self.on_btn3_pressed)
 
         self.boton4=QPushButton("Por defecto")
         caixaH2_V1_H2.addWidget(self.boton4)

@@ -31,7 +31,8 @@ class VentanaPrincipal(QMainWindow):
 
         self.setWindowTitle("Examen 12-12-_2022")
 
-        listaPersonas = [("Fisio", "Gabriel", "Perez", "gperez@daniel.com"), ("Neuro", "Alan", "Garcia", "alan@hotmail.com")]
+        listaPersonas = [("Fisio", "Gabriel", "Perez", "gperez@daniel.com"),
+                         ("Neuro", "Alan", "Garcia", "alan@hotmail.com")]
         self.modelo = PersonasModelo(listaPersonas)
 
         caixaV = QVBoxLayout()

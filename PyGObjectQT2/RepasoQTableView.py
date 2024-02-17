@@ -2,8 +2,9 @@ import sys
 
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QComboBox,
-                             QWidget, QCheckBox, QHBoxLayout, QLineEdit, QTableView)
-from PyQt6.QtCore import Qt, QAbstractTableModel
+                             QWidget, QCheckBox, QHBoxLayout, QLineEdit, QTableView, QPushButton)
+from PyQt6.QtCore import Qt, QAbstractTableModel, QModelIndex
+
 
 class ModeloTabla(QAbstractTableModel):
     def __init__(self, tabla,cabecera):
@@ -62,6 +63,12 @@ class ModeloTabla(QAbstractTableModel):
             return self.cabecera[section]
         return None
 
+    def removeRow(self, row, parent=QModelIndex()):
+        self.beginRemoveRows(parent, row, row)
+        del self.tabla[row]
+        self.endRemoveRows()
+        return True
+
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
         # Inicializa la clase base QMainWindow
@@ -110,8 +117,11 @@ class VentanaPrincipal(QMainWindow):
         self.cmbGenero=QComboBox() # Creación del combo box para el género
         self.cmbGenero.addItems(('Hombre', 'Mujer', 'Otros'))
         cajaH.addWidget(self.cmbGenero)
-        self.chkFallecido=QCheckBox('Fallecido') # Creación del check box para sabes su estado vital
+        self.chkFallecido=QCheckBox('Fallecido') # Creación del check box para saber su estado vital
         cajaH.addWidget(self.chkFallecido)
+        self.btnEliminar= QPushButton("Eliminar")
+        self.btnEliminar.clicked.connect(self.eliminarFila)
+        cajaH.addWidget(self.btnEliminar)
 
         cajaV.addLayout(cajaH) # Añadir la caja horizontal a la caja principal
 
@@ -130,12 +140,20 @@ class VentanaPrincipal(QMainWindow):
 
     #Método que se ejecuta al seleccionar una fila
     def on_filaSeleccionada(self):
-        indices= self.tabla.selectedIndexes()
+        indices= self.tabla.selectedIndexes() # Se obtienen los índices de la fila seleccionada
         if indices!=[]:
-            self.txtNombre.setText(indices[0].data())
-            self.txtDni.setText(indices[1].data())
-            self.cmbGenero.setCurrentText(indices[2].data())
-            self.chkFallecido.setChecked(indices[3].data())
+            self.txtNombre.setText(indices[0].data()) # Se establece el nombre en la caja de texto del nombre
+            self.txtDni.setText(indices[1].data()) # Se establece el DNI en la caja de texto del DNI
+            self.cmbGenero.setCurrentText(indices[2].data()) # Se establece el género en el combo box del género
+            self.chkFallecido.setChecked(indices[3].data()) # Se establece el estado vital en el check box del estado vital
+
+    #Metodo que elimina la fila seleccionada
+    def eliminarFila(self):
+        indice= self.tabla.currentIndex() # Se obtienen los índices de la fila seleccionada
+        print(indice.row())
+        if indice.isValid():
+            self.tabla.model().removeRow(indice.row()) # Se elimina la fila seleccionada
+            print("Fila eliminada")
 
 
 if __name__ == "__main__":
