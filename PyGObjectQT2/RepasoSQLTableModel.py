@@ -78,6 +78,8 @@ class VentanaPrincipal(QMainWindow):
         self.modelo.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit) # Establece la estrategia de edición del modelo (manual)
         self.modelo.setTable("usuarios")  # Establece la tabla de la base de datos a la que se conectará el modelo
 
+
+
         self.modelo.select()  # Realiza la consulta a la base de datos
 
         self.tabla.setModel(self.modelo) # Configuración del modelo de la tabla
@@ -91,6 +93,9 @@ class VentanaPrincipal(QMainWindow):
 
         # Para que seleccione todas las columnas de la fila seleccionada
         self.tabla.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+
+        # Establece el color de fondo de las celdas (opcional y sólo soporta el cambio para todas las celdas, no para celdas individuales)
+        self.tabla.setStyleSheet("QTableView::item { background-color: lightgreen; }")
 
         cajaV.addWidget(self.tabla)  # Añadir la tabla a la caja vertical
 
