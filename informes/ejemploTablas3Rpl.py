@@ -8,14 +8,16 @@ hojaEstilo=getSampleStyleSheet()
 
 elementosDoc=[]
 
-imagen=Image("oli.jpeg",20,20)
+imagen=Image("oli.jpeg",50,50)
 estiloCuerpoTexto=hojaEstilo["BodyText"]
-estiloCuerpoTexto.textColor=Color(0,150,0,1)
+estiloCuerpoTexto2=hojaEstilo["Heading4"]
+estiloCuerpoTexto.textColor=Color(150,0,0,1)
 parrafo=Paragraph("Optare",estiloCuerpoTexto)
+parrafo2=Paragraph("Optare",estiloCuerpoTexto2)
 
 datos=[ ["Empresas","Candidato 1","Candidato 2","Especificaciones"],
         ["Ayco","Marcos","Ruben","Desarrollo web con PHP"],
-        ["Iterat","Borja","Juan","Reconocimiento de imagenes con OpenCV"],
+        [[parrafo,parrafo2],"Borja","Juan","Reconocimiento de imagenes con OpenCV"],
         [[parrafo,imagen],"Lidier","Lucas","Aplicaciones para las Telco"] ]
 
 estilo=[("TEXTCOLOR",(0,0),(0,-1),colors.blue),
@@ -31,5 +33,5 @@ tabla.setStyle(estilo)
 
 elementosDoc.append(tabla)
 
-documento=SimpleDocTemplate("ejemploTablas.pdf", pagesize=A4)
+documento=SimpleDocTemplate("ejemploTablas3.pdf", pagesize=A4)
 documento.build(elementosDoc)
