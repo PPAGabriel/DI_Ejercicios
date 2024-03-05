@@ -151,6 +151,9 @@ estilo_linea_separacion = [
     ('LINEBELOW',(0,0),(-1,-1),1,colors.black),
 ]
 
+# Aplicamos el estilo a la tabla
+linea_separacion.setStyle(estilo_linea_separacion)
+
 # PIE DE PÁGINA
 pie_estilo=hojaEstilo["BodyText"] # Estilo de la cabecera
 pie_estilo.textColor = colors.darkgreen # Color de la cabecera
@@ -160,9 +163,6 @@ pie_estilo.fontSize=10
 
 # Contenido deL pie de página
 pie=Paragraph("GRACIAS POR SU CONFIANZA", pie_estilo)
-
-# Aplicamos el estilo a la tabla
-linea_separacion.setStyle(estilo_linea_separacion)
 
 ################################################################################################
 
