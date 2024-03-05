@@ -153,7 +153,7 @@ estilo_linea_separacion = [
 
 # PIE DE PÁGINA
 pie_estilo=hojaEstilo["BodyText"] # Estilo de la cabecera
-pie_estilo.textColor = colors.black # Color de la cabecera
+pie_estilo.textColor = colors.darkgreen # Color de la cabecera
 pie_estilo.alignment=1 # Alineación de la cabecera hacia la derecha
 pie_estilo.fontName="Helvetica-Bold"
 pie_estilo.fontSize=10
