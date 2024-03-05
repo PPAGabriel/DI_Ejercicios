@@ -20,7 +20,7 @@ datos=[ ["Empresas","Candidato 1","Candidato 2","Especificaciones"],
         [[parrafo,parrafo2],"Borja","Juan","Reconocimiento de imagenes con OpenCV"],
         [[parrafo,imagen],"Lidier","Lucas","Aplicaciones para las Telco"] ]
 
-estilo=[("TEXTCOLOR",(0,0),(0,-1),colors.blue),
+estilo=[("TEXTCOLOR",(0,0),(0,-1),colors.green),
         ("TEXTCOLOR",(1,0),(-1,0),colors.blueviolet),
         ("TEXTCOLOR",(1,1),(-1,-1),colors.grey),
         ("BOX",(1,1),(-1,-1),1.25,colors.grey),
