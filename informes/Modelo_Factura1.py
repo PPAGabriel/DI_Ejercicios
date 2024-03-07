@@ -3,7 +3,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle, Spacer, Flowable
 
-# FACTURA EN PDF
+# FACTURA 1 EN PDF
 
 hojaEstilo=getSampleStyleSheet()
 elementosDoc=[]
