@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout
                              QMessageBox)
 from PyQt6.QtCore import QSize
 from PyQt6.QtSql import QSqlDatabase, QSqlTableModel
+import GeneradorFactura
 
 
 class VentanaPrincipal(QMainWindow):
@@ -110,12 +111,15 @@ class VentanaPrincipal(QMainWindow):
         # Creación de los botones
         btnAceptar = QPushButton("Aceptar")
         btnCancelar = QPushButton("Cancelar")
+        btnFactura = QPushButton("Generar Factura")
 
         # Añadir los botones a la caja horizontal
         cajaH.addWidget(btnAceptar)
         cajaH.addWidget(btnCancelar)
+        cajaH.addWidget(btnFactura)
         btnAceptar.clicked.connect(self.on_btnAceptar_clicked)
         btnCancelar.clicked.connect(self.on_btnCancelar_clicked)
+        btnFactura.clicked.connect(self.on_btnFactura_clicked)
 
         cajaV.addLayout(cajaH)  # Añadir la caja horizontal a la caja vertical
 
@@ -221,6 +225,13 @@ class VentanaPrincipal(QMainWindow):
             valores.append(fila)
         return valores
 
+    def on_btnFactura_clicked(self):
+
+        auxValores=self.obtener_valores_tabla()
+
+        QMessageBox.information(self, "Factura", "Factura generada con éxito!", QMessageBox.StandardButton.Ok)
+
+        GeneradorFactura.crearTabla(auxValores)
 
 if __name__ == "__main__":
     aplicacion = QApplication(sys.argv)
