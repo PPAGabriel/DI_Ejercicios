@@ -67,6 +67,11 @@ class VentanaPrincipal(QMainWindow):
         self.btnAnadir.clicked.connect(self.on_btnAnadir_clicked)
         cajaV.addWidget(self.btnAnadir)
 
+        # Boton de Modificar
+        self.btnModificar = QPushButton("Modificar")
+        self.btnModificar.clicked.connect(self.on_btnModificar_clicked)
+        cajaV.addWidget(self.btnModificar)
+
         # Boton de Eliminar
         self.btnEliminar = QPushButton("Eliminar")
         self.btnEliminar.clicked.connect(self.on_btnEliminar_clicked)
@@ -169,12 +174,52 @@ class VentanaPrincipal(QMainWindow):
             self.txtDNI.setText("")
             self.txtEdad.setText("")
 
+    def on_btnModificar_clicked(self):
+
+        fila_modificada = [self.txtDNI.text(), self.txtNombre.text(), self.txtEdad.text(), self.cmbGenero.currentText(), self.chckFallecido.isChecked()]
+        datos_tabla=self.obtener_valores_tabla()
+
+        for i, fila in enumerate(datos_tabla):
+            if fila[0] == fila_modificada[0]:
+                row = i
+                break
+            else:
+                row = -1
+
+        if row != -1:
+            if fila_modificada[4]:
+                fallecido = 1
+            else:
+                fallecido = 0
+
+            self.modelo.setData(self.modelo.index(row, 0), fila_modificada[0])
+            self.modelo.setData(self.modelo.index(row, 1), fila_modificada[1])
+            self.modelo.setData(self.modelo.index(row, 2), fila_modificada[2])
+            self.modelo.setData(self.modelo.index(row, 3), fila_modificada[3])
+            self.modelo.setData(self.modelo.index(row, 4), fallecido)
+            print("Fila modificada (recuerde darle al boton 'ACEPTAR' para guardar los cambios)")
+        else:
+            self.warning = QMessageBox.warning(self, "Error", "Este DNI no se encuentra en la tabla",
+                                               QMessageBox.StandardButton.Ok)
+
+
     def on_btnEliminar_clicked(self):
         indice = self.tabla.currentIndex()
         print(f"Fila a eliminar: {indice.row()}")
         if indice.isValid():
             self.modelo.removeRow(indice.row())
             print("Fila eliminada (recuerde darle al boton 'ACEPTAR' para guardar los cambios)")
+
+    def obtener_valores_tabla(self):
+        valores = []
+        for row in range(self.modelo.rowCount()):
+            fila = []
+            for col in range(self.modelo.columnCount()):
+                index = self.modelo.index(row, col)
+                valor = self.modelo.data(index)
+                fila.append(valor)
+            valores.append(fila)
+        return valores
 
 
 if __name__ == "__main__":
